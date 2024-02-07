@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>FeatureFlag</members>
+		<members>FeatureFlagController</members>
+		<members>FeatureFlagControllerTest</members>
+		<members>FeatureFlagPlugin</members>
+		<members>FeatureFlagPluginTest</members>
+		<members>FeatureToggleTest</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>flag</members>
+		<name>ContentAsset</name>
+	</types>
+	<types>
+		<members>Feature_Flags</members>
+		<name>CustomApplication</name>
+	</types>
+	<types>
+		<members>Feature_Flag__c</members>
+		<members>Flag_Override__c</members>
+		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>Feature_Flag__c</members>
+		<name>CustomTab</name>
+	</types>
+	<types>
+		<members>Feature_Flag_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
+		<members>Feature_Flag__c-Feature Flag Layout</members>
+		<members>Flag_Override__c-Flag Override Layout</members>
+		<name>Layout</name>
+	</types>
+	<types>
+		<members>featureFlagUtil</members>
+		<members>flagStats</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>Feature_Flags</members>
+		<name>PermissionSet</name>
+	</types>
+	<version>58.0</version>
+</Package>

@@ -1,0 +1,48 @@
+<template>
+    <lightning-card title="Stats (Last 30 Days)">
+        <template if:true={loading}>
+            Calcuating stats...
+        </template>
+        <template if:false={loading}>
+            <template if:false={useCount}>
+                <p class="slds-p-horizontal_small warning">
+                    This flag has not been used in the last 30 days.<br />
+                    Consider removing it.
+                </p>
+            </template>
+
+            <template if:true={alwaysOff}>
+                <p class="slds-p-horizontal_small warning">
+                    This flag has NOT been on in the last 30 days.<br />
+                    Consider removing it.
+                </p>
+            </template>
+
+            <template if:true={alwaysOn}>
+                <p class="slds-p-horizontal_small warning">
+                    This flag has ALWAYS been on in the last 30 days.<br />
+                    Consider removing it.
+                </p>
+            </template>
+
+            <template if:true={useCount}>
+                <p class="slds-p-horizontal_small">
+                    <strong>Use Count:</strong>
+                    <lightning-formatted-number value={useCount} maximum-fraction-digits="0">
+                    </lightning-formatted-number><br />
+                    <strong>Last Used:</strong>
+                    <lightning-formatted-date-time value={lastUsed}></lightning-formatted-date-time><br />
+                    <strong>Percent On: </strong>
+                    <lightning-formatted-number value={onPercent} format-style="percent">
+                    </lightning-formatted-number><br />
+                    <strong>Override Percent:</strong>
+                    <lightning-formatted-number value={overridePercent} format-style="percent">
+                    </lightning-formatted-number><br />
+
+                </p>
+            </template>
+
+        </template>
+
+    </lightning-card>
+</template>

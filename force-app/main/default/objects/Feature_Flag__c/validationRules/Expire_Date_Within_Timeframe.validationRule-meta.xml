@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Expire_Date_Within_Timeframe</fullName>
+    <active>true</active>
+    <errorConditionFormula>Expire_Date__c &gt; NOW()+45</errorConditionFormula>
+    <errorDisplayField>Expire_Date__c</errorDisplayField>
+    <errorMessage>Expire date must be within 45 days.</errorMessage>
+</ValidationRule>
