@@ -1,10 +1,14 @@
 @isTest
-global class FeatureToggleTest {
-    global static Feature_Flag__c createFlag(String name, Boolean active) {
+public class FeatureToggleTest {
+    private static User getRunAsUser() {
+        return [SELECT Id FROM User WHERE Id = :UserInfo.getUserId()];
+    }
+
+    public static Feature_Flag__c createFlag(String name, Boolean active) {
         return createFlag(name, active, null);
     }
 
-    global static Feature_Flag__c createFlag(String name, Boolean active, DateTime expireDate) {
+    public static Feature_Flag__c createFlag(String name, Boolean active, DateTime expireDate) {
         Feature_Flag__c flag = new Feature_Flag__c(
             Name = name,
             Active__c = active,
@@ -15,123 +19,150 @@ global class FeatureToggleTest {
     }
 
     @isTest
-    private static void isActive_activeTrue_expectActive() {
-        createFlag('ActiveTestRecord', true);
+    private static void isActiveActiveTrueExpectActive() {
+        User runAsUser = getRunAsUser();
+        System.runAs(runAsUser) {
+            createFlag('ActiveTestRecord', true);
 
-        FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('ActiveTestRecord');
+            FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('ActiveTestRecord');
 
-        Test.startTest();
-        Boolean isActive = featureToggle.IsActive;
-        Test.stopTest();
+            Test.startTest();
+            Boolean isActive = featureToggle.isActive;
+            Test.stopTest();
 
-        System.assert (isActive, 'Expected the feature toggle to be active.');
+            System.assert(isActive, 'Expected the feature toggle to be active.');
+        }
     }
 
     @isTest
-    private static void isActive_activationDateExceeded_expectActive() {
-        Feature_Flag__c flag = createFlag('ActivationTestRecord', false);
-        flag.ActivationDateTime__c = DateTime.newInstance(2018,03,25);
-        update flag;
+    private static void isActiveActivationDateExceededExpectActive() {
+        User runAsUser = getRunAsUser();
+        System.runAs(runAsUser) {
+            Feature_Flag__c flag = createFlag('ActivationTestRecord', false);
+            flag.ActivationDateTime__c = DateTime.newInstance(2018, 03, 25);
+            update flag;
 
-        FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('ActivationTestRecord');
+            FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('ActivationTestRecord');
 
-        Test.startTest();
-        Boolean isActive = featureToggle.IsActive;
-        Test.stopTest();
+            Test.startTest();
+            Boolean isActive = featureToggle.isActive;
+            Test.stopTest();
 
-        System.assert (isActive, 'Expected the feature toggle to be active.');
+            System.assert(isActive, 'Expected the feature toggle to be active.');
+        }
     }
 
     @isTest
-    private static void isActive_deactivationDateExceeded_expectInactive() {
-        Feature_Flag__c flag = createFlag('DeactivationTestRecord', true);
-        flag.DeactivationDateTime__c = DateTime.newInstance(2006,04,15);
-        update flag;
+    private static void isActiveDeactivationDateExceededExpectInactive() {
+        User runAsUser = getRunAsUser();
+        System.runAs(runAsUser) {
+            Feature_Flag__c flag = createFlag('DeactivationTestRecord', true);
+            flag.DeactivationDateTime__c = DateTime.newInstance(2006, 04, 15);
+            update flag;
 
-        FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('DeactivationTestRecord');
+            FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('DeactivationTestRecord');
 
-        Test.startTest();
-        Boolean isActive = featureToggle.IsActive;
-        Test.stopTest();
+            Test.startTest();
+            Boolean isActive = featureToggle.isActive;
+            Test.stopTest();
 
-        System.assertEquals(false, isActive, 'Feature is not inactive');
+            System.assertEquals(false, isActive, 'Feature is not inactive');
+        }
     }
 
     @isTest
-    private static void isInactive_OverrideTrue_expectActive() {
-        Feature_Flag__c flag = createFlag('Override Test Record', false);
+    private static void isInactiveOverrideTrueExpectActive() {
+        User runAsUser = getRunAsUser();
+        System.runAs(runAsUser) {
+            Feature_Flag__c flag = createFlag('Override Test Record', false);
 
-        insert new Flag_Override__c(
-            Feature_Flag__c = flag.id,
-            User__c = UserInfo.getUserId()
-            );
+            insert new Flag_Override__c(
+                Feature_Flag__c = flag.id,
+                User__c = UserInfo.getUserId()
+                );
 
-        FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('Override Test Record');
+            FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('Override Test Record');
 
-        Test.startTest();
-        Boolean isActive = featureToggle.IsActive;
-        Test.stopTest();
+            Test.startTest();
+            Boolean isActive = featureToggle.isActive;
+            Test.stopTest();
 
-        System.assert (isActive, 'Expected the feature toggle to be active.');
+            System.assert(isActive, 'Expected the feature toggle to be active.');
+        }
     }
 
     @isTest
-    private static void isInactive_OverrideFalse_expectInactive() {
-        Feature_Flag__c flag = createFlag('Override False Test Record', false);
+    private static void isInactiveOverrideFalseExpectInactive() {
+        User runAsUser = getRunAsUser();
+        System.runAs(runAsUser) {
+            Feature_Flag__c flag = createFlag('Override False Test Record', false);
 
-        insert new Flag_Override__c(
-            Feature_Flag__c = flag.id,
-            User__c = UserInfo.getUserId(),
-            IsActive__c = false
-            );
+            insert new Flag_Override__c(
+                Feature_Flag__c = flag.id,
+                User__c = UserInfo.getUserId(),
+                IsActive__c = false
+                );
 
-        FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('Override False Test Record');
+            FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('Override False Test Record');
 
-        Test.startTest();
-        Boolean isActive = featureToggle.IsActive;
-        Test.stopTest();
+            Test.startTest();
+            Boolean isActive = featureToggle.isActive;
+            Test.stopTest();
 
-        System.assertEquals(false, isActive, 'Expected the feature toggle to be active.');
+            System.assertEquals(false, isActive, 'Expected the feature toggle to be active.');
+        }
     }
 
     @isTest
-    private static void getFeatureFlag_missingRecord_expectActiveDuringTests() {
-        FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('Missing Flag');
+    private static void getFeatureFlagMissingRecordExpectActiveDuringTests() {
+        User runAsUser = getRunAsUser();
+        System.runAs(runAsUser) {
+            FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('Missing Flag');
 
-        Test.startTest();
-        Boolean isActive = featureToggle.IsActive;
-        Test.stopTest();
+            Test.startTest();
+            Boolean isActive = featureToggle.isActive;
+            Test.stopTest();
 
-        System.assert(isActive, 'Expected missing flag to be active during tests.');
+            System.assert(isActive, 'Expected missing flag to be active during tests.');
+        }
     }
 
     @isTest
-    private static void activeMethod_existingFlag_expectActive() {
-        createFlag('Active Method Test', true);
+    private static void activeMethodExistingFlagExpectActive() {
+        User runAsUser = getRunAsUser();
+        System.runAs(runAsUser) {
+            createFlag('Active Method Test', true);
 
-        Test.startTest();
-        Boolean isActive = FeatureFlag.Active('Active Method Test');
-        Test.stopTest();
+            Test.startTest();
+            Boolean isActive = FeatureFlag.active('Active Method Test');
+            Test.stopTest();
 
-        System.assert(isActive, 'Expected Active method to return true.');
+            System.assert(isActive, 'Expected Active method to return true.');
+        }
     }
 
     @isTest
-    private static void activeMethod_missingFlag_expectActiveDuringTests() {
-        Test.startTest();
-        Boolean isActive = FeatureFlag.Active('Missing Active Method');
-        Test.stopTest();
+    private static void activeMethodMissingFlagExpectActiveDuringTests() {
+        User runAsUser = getRunAsUser();
+        System.runAs(runAsUser) {
+            Test.startTest();
+            Boolean isActive = FeatureFlag.active('Missing Active Method');
+            Test.stopTest();
 
-        System.assert(isActive, 'Expected Active method to return true for missing flag during tests.');
+            System.assert(isActive, 'Expected Active method to return true for missing flag during tests.');
+        }
     }
 
     @isTest
-    private static void testVisibleGetters_nullRecord_expectNulls() {
-        FeatureFlag featureToggle = FeatureFlag.createEmptyForTest();
+    private static void testVisibleGettersNullRecordExpectNulls() {
+        User runAsUser = getRunAsUser();
+        System.runAs(runAsUser) {
+            FeatureFlag featureToggle = FeatureFlag.createEmptyForTest();
 
-        System.assertEquals(null, featureToggle.activationDateTime, 'Expected null activationDateTime.');
-        System.assertEquals(null, featureToggle.deactivationDateTime, 'Expected null deactivationDateTime.');
-        System.assertEquals(null, featureToggle.expireDateTime, 'Expected null expireDateTime.');
+            System.assertEquals(null, featureToggle.activationDateTime, 'Expected null activationDateTime.');
+            System.assertEquals(null, featureToggle.deactivationDateTime, 'Expected null deactivationDateTime.');
+            System.assertEquals(null, featureToggle.expireDateTime, 'Expected null expireDateTime.');
+        }
     }
 
 

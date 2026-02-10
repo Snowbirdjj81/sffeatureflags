@@ -1,4 +1,7 @@
-global without sharing class FeatureFlag {
+/**
+ * @description Feature flag domain class for evaluating flag state.
+ */
+public without sharing class FeatureFlag {
     private static Map<String, FeatureFlag> features = new Map<String, FeatureFlag>();
 
     @TestVisible private Feature_Flag__c record;
@@ -8,15 +11,21 @@ global without sharing class FeatureFlag {
     }
 
     private FeatureFlag() {
-
+        // Intentionally blank for test-only construction.
     }
 
-    global static FeatureFlag getFeatureFlag(String name) {
+    /**
+     * @description Gets a feature flag by name, caching results per transaction.
+     * @param name Feature flag record name.
+     * @return FeatureFlag instance.
+     */
+    public static FeatureFlag getFeatureFlag(String name) {
         if(features.containsKey(name) == false) {
             List<Feature_Flag__c> featureToggleRecord = [SELECT Id, Name, Active__c, activationDateTime__c, Expire_Date__c, deactivationDateTime__c,
                                                          (SELECT Id, User__c, IsActive__c FROM Flag_Overrides__r WHERE User__c = : UserInfo.getUserId())
                                                          FROM Feature_Flag__c
                                                          WHERE Name = : name
+                                                         WITH USER_MODE
                                                                       LIMIT 1];
             if(featureToggleRecord.size() == 1) {
                 features.put(name, new FeatureFlag(featureToggleRecord[0]));
@@ -28,15 +37,23 @@ global without sharing class FeatureFlag {
     }
 
     @AuraEnabled(cacheable = true)
-    global static Boolean Active(String name){
-        return getFeatureFlag(name).IsActive;
+    /**
+     * @description Convenience method to evaluate whether a feature flag is active.
+     * @param name Feature flag record name.
+     * @return True if active.
+     */
+    public static Boolean active(String name){
+        return getFeatureFlag(name).isActive;
     }
 
     /**
      * @description Determines if the record is not null and that the Active__c
      *              field is set to true.
      */
-    global Boolean IsActive {
+    /**
+     * @description Indicates whether the feature flag is active.
+     */
+    public Boolean isActive {
         get {
             // Return early if the record is null.
             if (this.record == null) {return false;}
@@ -109,11 +126,17 @@ global without sharing class FeatureFlag {
         return new FeatureFlag();
     }
 
+    /**
+     * @description Exception for expired flags.
+     */
     public class ExpiredFlagException extends Exception {
-
+        // Intentionally blank.
     }
 
+    /**
+     * @description Exception for undefined flags.
+     */
     public class UndefinedFlagException extends Exception {
-
+        // Intentionally blank.
     }
 }
