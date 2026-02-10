@@ -77,15 +77,61 @@ global class FeatureToggleTest {
 
     @isTest
     private static void isInactive_OverrideFalse_expectInactive() {
-        createFlag('Override Test Record', false);
+        Feature_Flag__c flag = createFlag('Override False Test Record', false);
 
-        FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('Override Test Record');
+        insert new Flag_Override__c(
+            Feature_Flag__c = flag.id,
+            User__c = UserInfo.getUserId(),
+            IsActive__c = false
+            );
+
+        FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('Override False Test Record');
 
         Test.startTest();
         Boolean isActive = featureToggle.IsActive;
         Test.stopTest();
 
         System.assertEquals(false, isActive, 'Expected the feature toggle to be active.');
+    }
+
+    @isTest
+    private static void getFeatureFlag_missingRecord_expectActiveDuringTests() {
+        FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('Missing Flag');
+
+        Test.startTest();
+        Boolean isActive = featureToggle.IsActive;
+        Test.stopTest();
+
+        System.assert(isActive, 'Expected missing flag to be active during tests.');
+    }
+
+    @isTest
+    private static void activeMethod_existingFlag_expectActive() {
+        createFlag('Active Method Test', true);
+
+        Test.startTest();
+        Boolean isActive = FeatureFlag.Active('Active Method Test');
+        Test.stopTest();
+
+        System.assert(isActive, 'Expected Active method to return true.');
+    }
+
+    @isTest
+    private static void activeMethod_missingFlag_expectActiveDuringTests() {
+        Test.startTest();
+        Boolean isActive = FeatureFlag.Active('Missing Active Method');
+        Test.stopTest();
+
+        System.assert(isActive, 'Expected Active method to return true for missing flag during tests.');
+    }
+
+    @isTest
+    private static void testVisibleGetters_nullRecord_expectNulls() {
+        FeatureFlag featureToggle = FeatureFlag.createEmptyForTest();
+
+        System.assertEquals(null, featureToggle.activationDateTime, 'Expected null activationDateTime.');
+        System.assertEquals(null, featureToggle.deactivationDateTime, 'Expected null deactivationDateTime.');
+        System.assertEquals(null, featureToggle.expireDateTime, 'Expected null expireDateTime.');
     }
 
 

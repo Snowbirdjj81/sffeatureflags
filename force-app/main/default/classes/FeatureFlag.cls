@@ -63,6 +63,7 @@ global without sharing class FeatureFlag {
     /**
      * @description The activationDateTime__c of the stored Feature_Flag__c record.
      */
+    @TestVisible
     private Datetime activationDateTime {
         get {
             if (this.record != null) {
@@ -75,6 +76,7 @@ global without sharing class FeatureFlag {
     /**
      * @description The activationDateTime__c of the stored Feature_Flag__c record.
      */
+    @TestVisible
     private Datetime deactivationDateTime {
         get {
             if (this.record != null) {
@@ -87,6 +89,7 @@ global without sharing class FeatureFlag {
     /**
      * @description The activationDateTime__c of the stored Feature_Flag__c record.
      */
+    @TestVisible
     private Datetime expireDateTime {
         get {
             if (this.record != null) {return this.record.Expire_Date__c;}
@@ -94,10 +97,16 @@ global without sharing class FeatureFlag {
         }
     }
 
+    @TestVisible
     private Boolean isOverriden {
         get {
             return this.record.Flag_Overrides__r.isEmpty() == false;
         }
+    }
+
+    @TestVisible
+    static FeatureFlag createEmptyForTest() {
+        return new FeatureFlag();
     }
 
     public class ExpiredFlagException extends Exception {

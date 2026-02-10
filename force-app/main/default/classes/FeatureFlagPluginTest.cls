@@ -14,4 +14,17 @@ public with sharing class FeatureFlagPluginTest {
         System.assertEquals(1, res.size());
         System.assert (res[0].active, 'Feature was not active');
     }
+
+    @IsTest
+    static void getFlag_missingRecord_expectActiveDuringTests(){
+        FeatureFlagPlugin.Requests req = new FeatureFlagPlugin.Requests();
+        req.name = 'Missing Flag';
+
+        Test.startTest();
+        List<FeatureFlagPlugin.Results> res = FeatureFlagPlugin.checkFlags(new List<FeatureFlagPlugin.Requests> {req});
+        Test.stopTest();
+
+        System.assertEquals(1, res.size());
+        System.assert(res[0].active, 'Expected missing flag to be active during tests.');
+    }
 }
