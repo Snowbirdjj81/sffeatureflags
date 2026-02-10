@@ -23,6 +23,17 @@
 		<name>CustomObject</name>
 	</types>
 	<types>
+		<members>Feature_Flag__c.Active__c</members>
+		<members>Feature_Flag__c.ActivationDateTime__c</members>
+		<members>Feature_Flag__c.DeactivationDateTime__c</members>
+		<members>Feature_Flag__c.Expire_Date__c</members>
+		<members>Feature_Flag__c.Last_Used__c</members>
+		<members>Flag_Override__c.Feature_Flag__c</members>
+		<members>Flag_Override__c.IsActive__c</members>
+		<members>Flag_Override__c.User__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
 		<members>Feature_Flag__c</members>
 		<name>CustomTab</name>
 	</types>
