@@ -1,14 +1,14 @@
 /**
  * @description Invocable entry point for checking feature flag status in flows.
  */
-public with sharing class FeatureFlagPlugin {
+global with sharing class FeatureFlagPlugin {
     /**
      * @description Checks whether each requested feature flag is active.
      * @param featureRequest List of feature flag requests.
      * @return List of results indicating active status per request.
      */
     @InvocableMethod(label = 'Feature Flag' description = 'Check if a feature flag is active.' category = 'Flags')
-    public static List<Results> checkFlags(List<Requests> featureRequest){
+    global static List<Results> checkFlags(List<Requests> featureRequest){
         List<Results> resultList = new List<Results>();
         for (Requests req : featureRequest) {
             resultList.add(new Results(FeatureFlag.getFeatureFlag(req.name).isActive));
@@ -19,7 +19,7 @@ public with sharing class FeatureFlagPlugin {
     /**
      * @description Request wrapper for a feature flag name.
      */
-    public class Requests {
+    global class Requests {
         /**
          * @description Record name of the feature flag to check.
          */
@@ -30,7 +30,7 @@ public with sharing class FeatureFlagPlugin {
     /**
      * @description Result wrapper indicating feature flag status.
      */
-    public class Results {
+    global class Results {
         /**
          * @description Whether the feature flag is active.
          */
