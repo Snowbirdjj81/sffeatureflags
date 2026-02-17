@@ -11,7 +11,8 @@ global with sharing class FeatureFlagPlugin {
     global static List<Results> checkFlags(List<Requests> featureRequest){
         List<Results> resultList = new List<Results>();
         for (Requests req : featureRequest) {
-            resultList.add(new Results(FeatureFlag.getFeatureFlag(req.name).isActive));
+            Boolean isActive = FeatureFlag.active(req.name);
+            resultList.add(new Results(isActive == true));
         }
         return resultList;
     }

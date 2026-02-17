@@ -30,7 +30,8 @@ public without sharing class FeatureFlag {
             if(featureToggleRecord.size() == 1) {
                 features.put(name, new FeatureFlag(featureToggleRecord[0]));
             } else {
-                features.put(name, new FeatureFlag(new Feature_Flag__c(Active__c = Test.isRunningTest())));
+                // No record found: default to inactive.
+                features.put(name, new FeatureFlag());
             }
         }
         return features.get(name);
@@ -43,7 +44,8 @@ public without sharing class FeatureFlag {
      * @return True if active.
      */
     public static Boolean active(String name){
-        return getFeatureFlag(name).isActive;
+        FeatureFlag flag = getFeatureFlag(name);
+        return flag != null && flag.isActive == true;
     }
 
     /**
@@ -117,7 +119,9 @@ public without sharing class FeatureFlag {
     @TestVisible
     private Boolean isOverriden {
         get {
-            return this.record.Flag_Overrides__r.isEmpty() == false;
+            return this.record != null
+                && this.record.Flag_Overrides__r != null
+                && this.record.Flag_Overrides__r.isEmpty() == false;
         }
     }
 

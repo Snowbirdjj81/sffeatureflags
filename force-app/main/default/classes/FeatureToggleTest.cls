@@ -114,7 +114,7 @@ public class FeatureToggleTest {
     }
 
     @isTest
-    private static void getFeatureFlagMissingRecordExpectActiveDuringTests() {
+    private static void getFeatureFlagMissingRecordExpectInactive() {
         User runAsUser = getRunAsUser();
         System.runAs(runAsUser) {
             FeatureFlag featureToggle = FeatureFlag.getFeatureFlag('Missing Flag');
@@ -123,7 +123,7 @@ public class FeatureToggleTest {
             Boolean isActive = featureToggle.isActive;
             Test.stopTest();
 
-            System.assert(isActive, 'Expected missing flag to be active during tests.');
+            System.assertEquals(false, isActive, 'Expected missing flag to be inactive.');
         }
     }
 
@@ -142,14 +142,14 @@ public class FeatureToggleTest {
     }
 
     @isTest
-    private static void activeMethodMissingFlagExpectActiveDuringTests() {
+    private static void activeMethodMissingFlagExpectInactive() {
         User runAsUser = getRunAsUser();
         System.runAs(runAsUser) {
             Test.startTest();
             Boolean isActive = FeatureFlag.active('Missing Active Method');
             Test.stopTest();
 
-            System.assert(isActive, 'Expected Active method to return true for missing flag during tests.');
+            System.assertEquals(false, isActive, 'Expected Active method to return false for missing flag.');
         }
     }
 

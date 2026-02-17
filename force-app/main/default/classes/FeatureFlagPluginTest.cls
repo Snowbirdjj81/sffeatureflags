@@ -23,7 +23,7 @@ public with sharing class FeatureFlagPluginTest {
     }
 
     @IsTest
-    static void getFlagMissingRecordExpectActiveDuringTests(){
+    static void getFlagMissingRecordExpectInactive(){
         User runAsUser = getRunAsUser();
         System.runAs(runAsUser) {
             FeatureFlagPlugin.Requests req = new FeatureFlagPlugin.Requests();
@@ -34,7 +34,7 @@ public with sharing class FeatureFlagPluginTest {
             Test.stopTest();
 
             System.assertEquals(1, res.size());
-            System.assert(res[0].active, 'Expected missing flag to be active during tests.');
+            System.assertEquals(false, res[0].active, 'Expected missing flag to be inactive.');
         }
     }
 }
